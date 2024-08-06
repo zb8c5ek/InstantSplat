@@ -2,6 +2,7 @@ import os
 import subprocess
 from pathlib import Path
 from colorama import init, Fore
+import time
 
 DATA_ROOT_DIR = Path("D:\\InstantSplat\\data").resolve()
 dp_CodeRootDir = Path("D:\\InstantSplat\\").resolve()
@@ -33,8 +34,10 @@ N_VIEWS = [
 ]
 
 # Increase iteration to get better metrics (e.g. gs_train_iter=5000)
-gs_train_iter = 4000    # 2min30s c.a. on 8G RoG for 1000 iter.
+gs_train_iter = 8000    # 2min30s c.a. on 8G RoG for 1000 iter. 1200 s, 20 min for 8000 iter
 pose_lr = "1x"
+
+start_time = time.time()
 
 for DATASET in DATASETS:
     for SCENE in SCENES:
@@ -61,3 +64,5 @@ for DATASET in DATASETS:
             subprocess.run(CMD_T, shell=True, check=True)
             print(f"========= {SCENE}: Render interpolated pose & output video =========")
             subprocess.run(CMD_RI, shell=True, check=True)
+
+print(Fore.GREEN + "Total time taken: ", time.time() - start_time)
