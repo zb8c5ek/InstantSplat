@@ -43,7 +43,7 @@ N_VIEWS = [
 ]
 
 # Increase iteration to get better metrics (e.g. gs_train_iter=5000)
-gs_train_iter = 1000  # 2min30s c.a. on 8G RoG for 1000 iter. 1200 s, 20 min for 8000 iter
+gs_train_iter = 12000  # 2min30s c.a. on 8G RoG for 1000 iter. 1200 s, 20 min for 8000 iter, 30 min for 12000 iter.
 pose_lr = "1x"
 
 start_time = time.time()
@@ -53,6 +53,7 @@ messages = []
 for DATASET in DATASETS:
     for SCENE in SCENES:
         for N_VIEW in N_VIEWS:
+            current_time = time.time()
             # SOURCE_PATH must be Absolute path
             SOURCE_PATH = os.path.join(DATA_ROOT_DIR, DATASET, SCENE, f"{N_VIEW}_views")
             # MODEL_PATH = os.path.join(".", "output", "infer", DATASET, SCENE, f"{N_VIEW}_views_{gs_train_iter}Iter_{pose_lr}PoseLR")
@@ -80,6 +81,8 @@ for DATASET in DATASETS:
                 print(Fore.RED + f"Error: {e}")
                 continue
 
+            time_message = f"Time taken for {SCENE} with {N_VIEW} views: {time.time() - current_time} seconds"
+            messages.append(time_message)
 
 print(Fore.GREEN + "Total time taken: ", time.time() - start_time)
 print(Fore.GREEN + "All done!")
