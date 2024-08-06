@@ -1,8 +1,9 @@
 import os
 import subprocess
-from pathlib import Path
-from colorama import init, Fore
 import time
+from pathlib import Path
+
+from colorama import Fore
 
 DATA_ROOT_DIR = Path("D:\\InstantSplat\\data").resolve()
 dp_CodeRootDir = Path("D:\\InstantSplat\\").resolve()
@@ -13,8 +14,9 @@ print(Fore.CYAN + "Output Model Directory:", dp_OutputModelDir)
 
 DATASETS = [
     # "TT",
-    "sora",
+    # "sora",
     # "mars",
+    "custom"
 ]
 
 SCENES = [
@@ -23,26 +25,34 @@ SCENES = [
     # "Francis",
     # "Horse",
     # "Ignatius",
-    "santorini",
+    # "santorini",
+    "park_chatime"
 ]
 
 N_VIEWS = [
-    3,
+    # 3,
     # 5,
     # 9,
+    10,
     # 12,
+    20,
+    30,
+    50,
+    70,
+    90
 ]
 
 # Increase iteration to get better metrics (e.g. gs_train_iter=5000)
-gs_train_iter = 8000    # 2min30s c.a. on 8G RoG for 1000 iter. 1200 s, 20 min for 8000 iter
+gs_train_iter = 1000  # 2min30s c.a. on 8G RoG for 1000 iter. 1200 s, 20 min for 8000 iter
 pose_lr = "1x"
 
 start_time = time.time()
 
+messages = []
+
 for DATASET in DATASETS:
     for SCENE in SCENES:
         for N_VIEW in N_VIEWS:
-
             # SOURCE_PATH must be Absolute path
             SOURCE_PATH = os.path.join(DATA_ROOT_DIR, DATASET, SCENE, f"{N_VIEW}_views")
             # MODEL_PATH = os.path.join(".", "output", "infer", DATASET, SCENE, f"{N_VIEW}_views_{gs_train_iter}Iter_{pose_lr}PoseLR")
@@ -58,11 +68,21 @@ for DATASET in DATASETS:
             # ----- (3) Render interpolated pose & output video -----
             CMD_RI = f"python -W ignore ./render_by_interp.py -s {SOURCE_PATH} -m {dn_ModelPath} --n_views {N_VIEW} --scene {SCENE} --iter {gs_train_iter} --eval --get_video"
 
-            print(f"========= {SCENE}: Dust3r_coarse_geometric_initialization =========")
-            subprocess.run(CMD_D1, shell=True, check=True)
-            print(f"========= {SCENE}: Train: jointly optimize pose =========")
-            subprocess.run(CMD_T, shell=True, check=True)
-            print(f"========= {SCENE}: Render interpolated pose & output video =========")
-            subprocess.run(CMD_RI, shell=True, check=True)
+            try:
+                print(f"========= {SCENE}: Dust3r_coarse_geometric_initialization =========")
+                subprocess.run(CMD_D1, shell=True, check=True)
+                print(f"========= {SCENE}: Train: jointly optimize pose =========")
+                subprocess.run(CMD_T, shell=True, check=True)
+                print(f"========= {SCENE}: Render interpolated pose & output video =========")
+                subprocess.run(CMD_RI, shell=True, check=True)
+            except subprocess.CalledProcessError as e:
+                messages.append(f"Error: {e}")
+                print(Fore.RED + f"Error: {e}")
+                continue
+
 
 print(Fore.GREEN + "Total time taken: ", time.time() - start_time)
+print(Fore.GREEN + "All done!")
+# if there are messages, print them
+for message in messages:
+    print(Fore.RED + message)

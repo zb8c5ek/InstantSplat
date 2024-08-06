@@ -66,7 +66,7 @@ def images_to_video(image_folder, output_video_path, fps=30):
             image_path = os.path.join(image_folder, filename)
             image = imageio.imread(image_path)
             images.append(image)
-    codec = 'libx264'
+    codec = 'mpeg4'
     imageio.mimwrite(output_video_path, images, fps=fps, codec=codec)
 
 
