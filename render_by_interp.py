@@ -66,8 +66,8 @@ def images_to_video(image_folder, output_video_path, fps=30):
             image_path = os.path.join(image_folder, filename)
             image = imageio.imread(image_path)
             images.append(image)
-
-    imageio.mimwrite(output_video_path, images, fps=fps)
+    codec = 'libx264'
+    imageio.mimwrite(output_video_path, images, fps=fps, codec=codec)
 
 
 def render_set(model_path, name, iteration, views, gaussians, pipeline, background):
