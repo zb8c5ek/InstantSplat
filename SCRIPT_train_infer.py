@@ -26,20 +26,19 @@ SCENES = [
     # "Horse",
     # "Ignatius",
     # "santorini",
-    "park_chatime"
+    "parkingindoor"
 ]
 
 N_VIEWS = [
     # 3,
     # 5,
     # 9,
-    10,
+    # 10,
     # 12,
-    20,
-    30,
-    50,
-    70,
-    90
+    # 20,
+    # 30,
+    15,
+    40
 ]
 
 # Increase iteration to get better metrics (e.g. gs_train_iter=5000)

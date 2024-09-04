@@ -1,6 +1,7 @@
 torch
 torchvision
 roma
+plyfile
 evo
 gradio
 matplotlib
