@@ -26,7 +26,10 @@ SCENES = [
     # "Horse",
     # "Ignatius",
     # "santorini",
-    "parkingindoor"
+    # "parkingindoor",
+    # "socket",
+    "socket-2",
+    "socket-1",
 ]
 
 N_VIEWS = [
@@ -36,13 +39,13 @@ N_VIEWS = [
     # 10,
     # 12,
     # 20,
-    # 30,
-    15,
-    40
+    30,
+    # 15,
+    # 40
 ]
 
 # Increase iteration to get better metrics (e.g. gs_train_iter=5000)
-gs_train_iter = 12000  # 2min30s c.a. on 8G RoG for 1000 iter. 1200 s, 20 min for 8000 iter, 30 min for 12000 iter.
+gs_train_iter = 8000  # 2min30s c.a. on 8G RoG for 1000 iter. 1200 s, 20 min for 8000 iter, 30 min for 12000 iter.
 pose_lr = "1x"
 
 start_time = time.time()
