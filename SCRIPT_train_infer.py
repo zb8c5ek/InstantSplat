@@ -26,21 +26,23 @@ SCENES = [
     # "Horse",
     # "Ignatius",
     # "santorini",
-    # "parkingindoor",
+    "parkingindoor",
     # "socket",
-    "socket-2",
-    "socket-1",
+    # "socket-2",
+    # "socket-1",
+    # "socket-cad"
 ]
 
 N_VIEWS = [
     # 3,
     # 5,
+    # 7,
     # 9,
     # 10,
     # 12,
     # 20,
-    30,
-    # 15,
+    # 30,
+    15,
     # 40
 ]
 

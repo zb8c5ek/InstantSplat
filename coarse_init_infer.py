@@ -9,16 +9,16 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 os.sys.path.append(os.path.abspath(os.path.join(BASE_DIR, "submodules", "dust3r")))
 os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
 
-from dust3r.inference import inference
-from dust3r.model import AsymmetricCroCo3DStereo
-from dust3r.utils.device import to_numpy
-from dust3r.image_pairs import make_pairs
-from dust3r.cloud_opt import global_aligner, GlobalAlignerMode
+from submodules.dust3r.dust3r.inference import inference
+from submodules.dust3r.dust3r.model import AsymmetricCroCo3DStereo
+from submodules.dust3r.dust3r.utils.device import to_numpy
+from submodules.dust3r.dust3r.image_pairs import make_pairs
+from submodules.dust3r.dust3r.cloud_opt import global_aligner, GlobalAlignerMode
 from utils.dust3r_utils import  compute_global_alignment, load_images, storePly, save_colmap_cameras, save_colmap_images
 
 def get_args_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--image_size", type=int, default=512, choices=[512, 224], help="image size")
+    parser.add_argument("--image_size", type=int, default=1280, choices=[1280, 720], help="image size")
     # parser.add_argument("--model_path", type=str, default="./checkpoints/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth", help="path to the model weights")
     parser.add_argument("--model_path", type=str, default="submodules/dust3r/checkpoints/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth", help="path to the model weights")
     parser.add_argument("--device", type=str, default='cuda', help="pytorch device")
@@ -62,16 +62,17 @@ if __name__ == '__main__':
     #         tgt_path = os.path.join(img_folder_path, img_name)
     #         print(src_path, tgt_path)
     #         shutil.copy(src_path, tgt_path)
-    images, ori_size = load_images(img_folder_path, size=512)
+    images, ori_size = load_images(img_folder_path, size=1280)
     print("ori_size", ori_size)
 
     start_time = time.time()
-    ##########################################################################################################################################################################################
+    # 1. Inference the Using Dust3r Model
     pairs = make_pairs(images, scene_graph='complete', prefilter=None, symmetrize=True)
     output = inference(pairs, model, args.device, batch_size=batch_size)
     output_colmap_path=img_folder_path.replace("images", "sparse/0")
     os.makedirs(output_colmap_path, exist_ok=True)
 
+    # 2. Global Alignment
     scene = global_aligner(output, device=args.device, mode=GlobalAlignerMode.PointCloudOptimizer)
     loss = compute_global_alignment(scene=scene, init="mst", niter=niter, schedule=schedule, lr=lr, focal_avg=args.focal_avg)
     scene = scene.clean_pointcloud()
