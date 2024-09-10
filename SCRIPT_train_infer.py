@@ -26,11 +26,12 @@ SCENES = [
     # "Horse",
     # "Ignatius",
     # "santorini",
-    "parkingindoor",
+    # "parkingindoor",
     # "socket",
     # "socket-2",
     # "socket-1",
     # "socket-cad"
+    "fisheye"
 ]
 
 N_VIEWS = [
@@ -40,9 +41,9 @@ N_VIEWS = [
     # 9,
     # 10,
     # 12,
-    # 20,
+    # 15,
+    20,
     # 30,
-    15,
     # 40
 ]
 

@@ -14,13 +14,16 @@ from submodules.dust3r.dust3r.model import AsymmetricCroCo3DStereo
 from submodules.dust3r.dust3r.utils.device import to_numpy
 from submodules.dust3r.dust3r.image_pairs import make_pairs
 from submodules.dust3r.dust3r.cloud_opt import global_aligner, GlobalAlignerMode
-from utils.dust3r_utils import  compute_global_alignment, load_images, storePly, save_colmap_cameras, save_colmap_images
+from utils.dust3r_utils import compute_global_alignment, load_images, storePly, save_colmap_cameras, save_colmap_images
+
 
 def get_args_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("--image_size", type=int, default=1280, choices=[1280, 720], help="image size")
     # parser.add_argument("--model_path", type=str, default="./checkpoints/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth", help="path to the model weights")
-    parser.add_argument("--model_path", type=str, default="submodules/dust3r/checkpoints/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth", help="path to the model weights")
+    parser.add_argument("--model_path", type=str,
+                        default="submodules/dust3r/checkpoints/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth",
+                        help="path to the model weights")
     parser.add_argument("--device", type=str, default='cuda', help="pytorch device")
     parser.add_argument("--batch_size", type=int, default=1)
     parser.add_argument("--schedule", type=str, default='linear')
@@ -31,12 +34,13 @@ def get_args_parser():
 
     parser.add_argument("--llffhold", type=int, default=2)
     parser.add_argument("--n_views", type=int, default=12)
-    parser.add_argument("--img_base_path", type=str, default="/home/workspace/datasets/instantsplat/Tanks/Barn/24_views")
+    parser.add_argument("--img_base_path", type=str,
+                        default="/home/workspace/datasets/instantsplat/Tanks/Barn/24_views")
 
     return parser
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     parser = get_args_parser()
     args = parser.parse_args()
 
@@ -54,7 +58,8 @@ if __name__ == '__main__':
     ##########################################################################################################################################################################################
 
     train_img_list = sorted(os.listdir(img_folder_path))
-    assert len(train_img_list)==n_views, f"Number of images ({len(train_img_list)}) in the folder ({img_folder_path}) is not equal to {n_views}"
+    assert len(
+        train_img_list) == n_views, f"Number of images ({len(train_img_list)}) in the folder ({img_folder_path}) is not equal to {n_views}"
 
     # if len(os.listdir(img_folder_path)) != len(train_img_list):
     #     for img_name in train_img_list:
@@ -62,19 +67,20 @@ if __name__ == '__main__':
     #         tgt_path = os.path.join(img_folder_path, img_name)
     #         print(src_path, tgt_path)
     #         shutil.copy(src_path, tgt_path)
-    images, ori_size = load_images(img_folder_path, size=1280)
+    images, ori_size = load_images(img_folder_path, size=720)
     print("ori_size", ori_size)
 
     start_time = time.time()
     # 1. Inference the Using Dust3r Model
     pairs = make_pairs(images, scene_graph='complete', prefilter=None, symmetrize=True)
     output = inference(pairs, model, args.device, batch_size=batch_size)
-    output_colmap_path=img_folder_path.replace("images", "sparse/0")
+    output_colmap_path = img_folder_path.replace("images", "sparse/0")
     os.makedirs(output_colmap_path, exist_ok=True)
 
     # 2. Global Alignment
     scene = global_aligner(output, device=args.device, mode=GlobalAlignerMode.PointCloudOptimizer)
-    loss = compute_global_alignment(scene=scene, init="mst", niter=niter, schedule=schedule, lr=lr, focal_avg=args.focal_avg)
+    loss = compute_global_alignment(scene=scene, init="mst", niter=niter, schedule=schedule, lr=lr,
+                                    focal_avg=args.focal_avg)
     scene = scene.clean_pointcloud()
 
     imgs = to_numpy(scene.imgs)
@@ -86,12 +92,11 @@ if __name__ == '__main__':
     intrinsics = to_numpy(scene.get_intrinsics())
     ##########################################################################################################################################################################################
     end_time = time.time()
-    print(f"Time taken for {n_views} views: {end_time-start_time} seconds")
+    print(f"Time taken for {n_views} views: {end_time - start_time} seconds")
 
     # save
     save_colmap_cameras(ori_size, intrinsics, os.path.join(output_colmap_path, 'cameras.txt'))
     save_colmap_images(poses, os.path.join(output_colmap_path, 'images.txt'), train_img_list)
-
     pts_4_3dgs = np.concatenate([p[m] for p, m in zip(pts3d, confidence_masks)])
     color_4_3dgs = np.concatenate([p[m] for p, m in zip(imgs, confidence_masks)])
     color_4_3dgs = (color_4_3dgs * 255.0).astype(np.uint8)
