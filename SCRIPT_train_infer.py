@@ -31,8 +31,12 @@ SCENES = [
     # "socket-2",
     # "socket-1",
     # "socket-cad"
-    "fisheye"
+    # "fisheye",
+    # "fisheyefront",
+    # "fisheyeL+R+F"
+    "zm-garage",
 ]
+
 
 N_VIEWS = [
     # 3,
@@ -42,8 +46,8 @@ N_VIEWS = [
     # 10,
     # 12,
     # 15,
-    20,
-    # 30,
+    # 20,
+    30,
     # 40
 ]
 

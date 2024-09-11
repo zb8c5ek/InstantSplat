@@ -41,6 +41,7 @@ def get_args_parser():
 
 
 if __name__ == '__main__':
+    from pathlib import Path
     parser = get_args_parser()
     args = parser.parse_args()
 
@@ -57,7 +58,7 @@ if __name__ == '__main__':
     model = AsymmetricCroCo3DStereo.from_pretrained(model_path).to(device)
     ##########################################################################################################################################################################################
 
-    train_img_list = sorted(os.listdir(img_folder_path))
+    train_img_list = [f.as_posix() for f in Path(img_folder_path).glob("*.jpg")] + [f.as_posix() for f in Path(img_folder_path).glob("*.png")]
     assert len(
         train_img_list) == n_views, f"Number of images ({len(train_img_list)}) in the folder ({img_folder_path}) is not equal to {n_views}"
 
@@ -67,7 +68,7 @@ if __name__ == '__main__':
     #         tgt_path = os.path.join(img_folder_path, img_name)
     #         print(src_path, tgt_path)
     #         shutil.copy(src_path, tgt_path)
-    images, ori_size = load_images(img_folder_path, size=720)
+    images, ori_size = load_images(img_folder_path, size=512)
     print("ori_size", ori_size)
 
     start_time = time.time()
